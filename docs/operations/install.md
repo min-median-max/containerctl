@@ -3,14 +3,51 @@
 One-time setup for a machine. Everything after this runs without administrator
 rights.
 
-## Build
+Requirements: macOS with Apple `container` 1.3 or later, and Go 1.27 or later.
+The application also needs the Xcode command line tools, which supply the
+compiler for its AppKit layer.
+
+## Command line only
 
 ```sh
-make
+go install github.com/min-median-max/containerctl/cmd/containerctl@latest
+go install github.com/min-median-max/containerctl/cmd/containerdns@latest
 ```
 
-This produces `bin/containerctl`, `bin/containerdns` and
-`bin/containerbar.app`.
+Both binaries land in the same directory, which is what `containerctl install`
+needs: it registers the DNS agent with the path of the `containerdns` beside
+`containerctl`.
+
+## Command line and application
+
+```sh
+git clone https://github.com/min-median-max/containerctl.git
+cd containerctl
+make
+sudo make install
+```
+
+`make` produces `bin/containerctl`, `bin/containerdns` and
+`bin/containerbar.app`. `make install` copies the two binaries to
+`/usr/local/bin` and the application to `/Applications`.
+
+Install elsewhere with `PREFIX` and `APPDIR`, which needs no `sudo` when the
+directories belong to you:
+
+```sh
+make install PREFIX="$HOME/.local" APPDIR="$HOME/Applications"
+```
+
+`make uninstall` removes the installed files. It does not undo the machine
+setup; run `containerctl uninstall` for that.
+
+## Prebuilt downloads are not offered
+
+A downloaded binary carries the quarantine attribute, and macOS terminates an
+unsigned quarantined binary before it runs. Distributing a working download
+requires an Apple Developer ID signature and notarization, which this project
+does not have. Both paths above build on the machine, so nothing is
+quarantined.
 
 ## Set up the machine
 
@@ -41,22 +78,13 @@ bin/containerctl doctor
 The command reports what is still missing and changes nothing. A machine that
 is set up prints `nothing to do`.
 
-## Put the binaries on PATH
-
-```sh
-ln -s "$PWD/bin/containerctl" /usr/local/bin/
-ln -s "$PWD/bin/containerdns" /usr/local/bin/
-```
-
-`containerctl install` registers the launchd agent with the path of the
-`containerdns` binary next to `containerctl`, so keep the two together.
-
 ## Remove
 
 ```sh
 containerctl uninstall
 security remove-trusted-cert -d ~/.containerctl/ca.crt
 rm -rf ~/.containerctl
+sudo make uninstall          # in the clone, if make install was used
 ```
 
 `uninstall` removes the resolver entries and the launchd agent. The certificate

@@ -2,7 +2,12 @@ BIN := bin
 APP := $(BIN)/containerbar.app
 GO  ?= go
 
-.PHONY: all check clean test e2e docs-check docs-generate install
+# Where "make install" copies the built files. Override PREFIX to install
+# somewhere else, for example PREFIX=$$HOME/.local.
+PREFIX  ?= /usr/local
+APPDIR  ?= /Applications
+
+.PHONY: all check clean test e2e docs-check docs-generate install uninstall
 all: $(BIN)/containerctl $(BIN)/containerdns $(APP)
 
 $(BIN)/containerctl: $(shell find cmd/containerctl internal -name '*.go')
@@ -51,9 +56,25 @@ docs-generate: $(BIN)/containerctl
 e2e:
 	CONTAINERCTL_E2E=1 $(GO) test ./... -count=1 -timeout 25m
 
-# One-time machine setup. Everything after this runs unprivileged.
+# Installs the built files for use outside this directory. containerctl and
+# containerdns are installed side by side, which is what the machine setup
+# needs: it registers the DNS agent with the path of the containerdns beside
+# containerctl.
 install: all
-	$(BIN)/containerctl install
+	mkdir -p "$(PREFIX)/bin"
+	cp $(BIN)/containerctl $(BIN)/containerdns "$(PREFIX)/bin/"
+	rm -rf "$(APPDIR)/containerbar.app"
+	cp -R $(APP) "$(APPDIR)/"
+	@echo
+	@echo "installed $(PREFIX)/bin/containerctl, $(PREFIX)/bin/containerdns"
+	@echo "installed $(APPDIR)/containerbar.app"
+	@echo
+	@echo "next: containerctl install   # one-time machine setup, asks for the password"
+
+uninstall:
+	rm -f "$(PREFIX)/bin/containerctl" "$(PREFIX)/bin/containerdns"
+	rm -rf "$(APPDIR)/containerbar.app"
+	@echo "removed the installed files; run \"containerctl uninstall\" first to undo the machine setup"
 
 clean:
 	rm -rf $(BIN)

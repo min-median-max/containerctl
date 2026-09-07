@@ -10,11 +10,15 @@
 ## 시작
 
 ```sh
-make
-bin/containerctl install     # 머신당 1회. 암호를 묻는다
+go install github.com/min-median-max/containerctl/cmd/containerctl@latest
+go install github.com/min-median-max/containerctl/cmd/containerdns@latest
+containerctl install         # 머신당 1회. 암호를 묻는다
 cd ~/work/your-project
 containerctl up
 ```
+
+메뉴바 앱까지 쓰려면 저장소를 클론해 `make`와 `sudo make install`을 실행한다.
+[설치](docs/operations/install.ko.md) 참고.
 
 ## 사용법은 명령에 있다
 
@@ -47,4 +51,5 @@ containerctl status --json   # 현재 머신 상태
 
 ## 요구 사항
 
-Apple `container` 1.3 이상이 설치된 macOS, 빌드에는 Go 1.27 이상.
+Apple `container` 1.3 이상이 설치된 macOS, Go 1.27 이상. 앱은 Xcode 명령줄
+도구도 필요하다.

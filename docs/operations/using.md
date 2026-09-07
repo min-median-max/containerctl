@@ -2,6 +2,24 @@
 
 Adding a project, running it, and the daily commands.
 
+## If it is already installed on this machine
+
+Nothing to install and nothing to set up. Check with:
+
+```sh
+containerctl doctor     # prints "nothing to do" when the machine is ready
+containerctl status     # the proxy, and every project already registered
+```
+
+`status` also shows the domains other projects already serve. Pick a different
+name for yours; `up` refuses a domain another running project serves and names
+that project.
+
+The menu bar application is `/Applications/containerbar.app` when it was
+installed with `make install`. Open it for the same actions in a window.
+
+Everything else is in `containerctl brief`.
+
 ## Add a project
 
 A project is a Compose file. A service with no extra settings is served at
@@ -45,8 +63,18 @@ x-containerctl:
   domain: shop.test
 ```
 
-Add or remove machine domains in the application's **Domains** screen. Adding a
-domain writes an `/etc/resolver` entry and asks for the password once.
+Manage the machine's domains from the command line:
+
+```sh
+containerctl domain                    # list them
+containerctl domain add lab.test       # delegate another; asks for the password
+containerctl domain default lab.test   # what projects use when they name none
+containerctl domain remove lab.test
+```
+
+The application's **Domains** screen does the same. Adding a domain writes an
+`/etc/resolver` entry, which is why it asks for the password. `remove` refuses
+the default domain and a domain a project pins.
 
 A domain with two labels, such as `shop.test`, also gives a valid wildcard
 certificate for names that have no route. A single-label domain such as `test`

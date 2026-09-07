@@ -65,6 +65,14 @@ func Commands() []Command {
 			Example: "containerctl logs -f web",
 		},
 		{
+			Name: "domain", Args: "[add|remove|default] [name]",
+			Summary: "List the machine's domains, or change them.",
+			Effect: "add writes an /etc/resolver entry for the domain. remove deletes it. " +
+				"default changes the domain projects use when their Compose file names none.",
+			Root:    true,
+			Example: "containerctl domain add lab.test",
+		},
+		{
 			Name: "status", Args: "[--json]",
 			Summary: "Print the proxy, the DNS server and every registered project.",
 			Example: "containerctl status --json",

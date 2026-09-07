@@ -17,6 +17,8 @@ and how each item is removed.
 | `~/.containerctl/machine.json` | Domain changes | No | Delete the file |
 | `~/.containerctl/groups.json` | Project registration | No | Delete the file |
 | `~/.containerctl/logs/` | The launchd agent | No | Delete the directory |
+| `~/.containerctl/completions/` | Successful foreground initializers | No | Delete the record; initialization then requires an explicit retry |
+| `~/.containerctl/locks/` | Project lifecycle commands | No | Inactive files can remain; active locks release when the command ends |
 
 ## System state
 

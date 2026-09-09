@@ -7,7 +7,10 @@ GO  ?= go
 PREFIX  ?= /usr/local
 APPDIR  ?= /Applications
 
-.PHONY: all check clean test e2e docs-check docs-generate install uninstall
+OUT ?= /tmp/containerbar.png
+REGION ?=
+
+.PHONY: all check clean test e2e docs-check docs-generate install uninstall window
 all: $(BIN)/containerctl $(BIN)/containerdns $(APP)
 
 $(BIN)/containerctl: $(shell find cmd/containerctl internal -name '*.go')
@@ -75,6 +78,12 @@ uninstall:
 	rm -f "$(PREFIX)/bin/containerctl" "$(PREFIX)/bin/containerdns"
 	rm -rf "$(APPDIR)/containerbar.app"
 	@echo "removed the installed files; run \"containerctl uninstall\" first to undo the machine setup"
+
+# window captures the running window and reports where its rows of type sit, so
+# a change to the layout is measured rather than judged by eye. REGION is the
+# left, right, top and bottom of the area to measure.
+window:
+	swift tools/window.swift $(OUT) $(REGION)
 
 clean:
 	rm -rf $(BIN)

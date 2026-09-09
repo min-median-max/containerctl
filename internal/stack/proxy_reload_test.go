@@ -29,12 +29,13 @@ fi
 				t.Fatal(err)
 			}
 			t.Setenv("CONTAINER_BIN", binary)
+			t.Setenv("DOCKER_BIN", filepath.Join(dir, "no-docker"))
 			t.Setenv("CONTAINERCTL_RELOAD_CALLS", calls)
 			t.Setenv("CONTAINERCTL_RELOAD_FAIL", "0")
 			if failed {
 				t.Setenv("CONTAINERCTL_RELOAD_FAIL", "1")
 			}
-			err := ReloadProxy()
+			err := ReloadProxy(AppleEngine)
 			if failed {
 				want := "container exec containerctl-edge nginx -s reload: " + diagnostic
 				if err == nil || err.Error() != want {

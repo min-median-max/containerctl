@@ -152,9 +152,9 @@ type Key struct {
 func ProjectKeys() []Key {
 	return []Key{
 		{"x-containerctl.domain", "string", "the machine default domain",
-			"Local domain this project's services use. Naming it here pins it to the project."},
+			"Local domain the project's service domains fall under. Naming it here pins it to the project."},
 		{"x-containerctl.extra_domains", "list of string", "empty",
-			"Further local domains this project's services may claim."},
+			"Further local domains the project's service domains may fall under."},
 		{"x-containerctl.network", "string", "default",
 			"Container network the project's services and the proxy share."},
 		{"name", "string", "the Compose file's directory name",
@@ -162,16 +162,21 @@ func ProjectKeys() []Key {
 	}
 }
 
+// ServiceKeys are the keys under a service's `x-containerctl` mapping.
+func ServiceKeys() []Key {
+	return []Key{
+		{"services.<name>.x-containerctl.domains", "list of string", "none: the service is internal",
+			"Domains the proxy routes to this service, each under one of the project's domains. " +
+				"Each domain gets its own certificate and route. A service without it runs and " +
+				"other services reach it by name, but the proxy does not route to it and issues it no certificate."},
+	}
+}
+
 // ServiceLabels are the labels this tool reads from a Compose service.
 func ServiceLabels() []Key {
 	return []Key{
-		{"containerctl.domain", "string", "<service>.<project domain>",
-			"Domain the proxy routes to this service."},
 		{"containerctl.port", "integer", "see the port order below",
 			"Port the service listens on inside the container."},
-		{"containerctl.internal", "boolean", "false",
-			"Marks a service with no domain. It runs and other services reach it by name, " +
-				"but the proxy does not route to it and issues it no certificate."},
 		{"containerctl.tls", "boolean", "false",
 			"Marks a backend that already serves HTTPS on its port."},
 	}
@@ -184,6 +189,7 @@ func InternalLabels() []Key {
 		{"containerctl.role", "string", "none", "Marks a container as a service or the proxy."},
 		{"containerctl.group", "string", "none", "Project the container belongs to."},
 		{"containerctl.service", "string", "none", "Service name within the project."},
+		{"containerctl.domain", "string", "empty", "Domains the proxy routes to the container, separated by commas; empty for an internal service."},
 		{"containerctl.scheme", "string", "http", "Scheme the proxy uses to reach the service."},
 		{"containerctl.config", "string", "none", "Digest of the resolved service configuration and local image."},
 		{"containerctl.volume", "string", "none", "Compose declaration key of a managed named volume."},

@@ -266,12 +266,10 @@ func lifecycleConfig(t *testing.T) *Config {
 services:
   db:
     image: postgres
-    labels: {containerctl.internal: 'true'}
     healthcheck: {test: [CMD, pg_isready, -h127.0.0.1, -U, postgres], interval: 1ms, timeout: 10ms, retries: 3}
   initialize:
     image: platform
     command: [init]
-    labels: {containerctl.internal: 'true'}
     depends_on: {db: {condition: service_healthy}}
   web:
     image: platform

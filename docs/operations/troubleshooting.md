@@ -8,7 +8,7 @@ nothing, and `containerctl status`, which reports what is running.
 | A name does not resolve | The DNS agent is not registered | `containerctl install` |
 | A name does not resolve, and the agent is registered | The answer was cached while the proxy was down | Wait a few seconds and retry |
 | 502 from the proxy | The container runs but does not listen on the resolved port | `containerctl logs <service>`, then check the port order in `containerctl schema` |
-| 404 from the proxy | No route claims the name: the service is stopped, marked internal, or the domain differs | `containerctl status` |
+| 404 from the proxy | No route claims the name: the service is stopped, internal (no domains), or the domain differs | `containerctl status` |
 | Certificate warning on a routed name | The certificate authority is not trusted | `containerctl install` |
 | Certificate warning on an unrouted name | A wildcard whose parent is a single label is rejected by clients | Use a two-label domain such as `shop.test` |
 | A command asks for the password | The project uses a domain the machine does not delegate yet | Expected; it is asked once per domain |

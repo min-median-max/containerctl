@@ -106,8 +106,12 @@ Plain HTTP on port 80 returns 308 to the HTTPS address, except
 A proxy's configuration is generated from labels on running containers, not
 from the Compose files. `containerctl` lists the containers of every engine
 present, selects those labelled `containerctl.role=service`, and writes one
-nginx server block per container that carries a `containerctl.domain` label and
-is running, into the configuration of the proxy for that container's engine.
+nginx server block per domain of each running container, into the
+configuration of the proxy for that container's engine. A container carries the
+domains of its service's `x-containerctl.domains` in the `containerctl.domain`
+label, separated by commas; the label is empty for an internal service. Each
+domain gets its own certificate. All server blocks of a container proxy to the
+same backend.
 
 Consequences:
 
@@ -208,7 +212,8 @@ apply to `nope.test`. A domain with two labels, such as `dev.test`, gives
 A domain is delegated once per machine by a file in `/etc/resolver`. Domains are
 therefore machine state, stored in `~/.containerctl/machine.json`. A project
 uses the machine's default domain unless its Compose file names one under
-`x-containerctl.domain`.
+`x-containerctl.domain`. The domains of a service must fall under the project's
+domains.
 
 The set of delegated domains is the machine's domains plus any domain a project
 pins.

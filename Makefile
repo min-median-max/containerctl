@@ -13,15 +13,15 @@ REGION ?=
 .PHONY: all check clean test e2e docs-check docs-generate install uninstall window
 all: $(BIN)/containerctl $(BIN)/containerdns $(APP)
 
-$(BIN)/containerctl: $(shell find cmd/containerctl internal -name '*.go')
+$(BIN)/containerctl: $(shell find cmd/containerctl internal \( -name '*.go' -o -name '*.c' -o -name '*.h' \))
 	$(GO) build -o $@ ./cmd/containerctl
 
-$(BIN)/containerdns: $(shell find cmd/containerdns internal -name '*.go')
+$(BIN)/containerdns: $(shell find cmd/containerdns internal \( -name '*.go' -o -name '*.c' -o -name '*.h' \))
 	$(GO) build -o $@ ./cmd/containerdns
 
 # The menu bar app has to be a bundle: LSUIElement is what keeps it out of the
 # Dock and the app switcher, and only Info.plist can say so.
-$(APP): $(BIN)/containerctl $(BIN)/containerdns $(shell find cmd/containerbar -type f) $(shell find internal -name '*.go')
+$(APP): $(BIN)/containerctl $(BIN)/containerdns $(shell find cmd/containerbar -type f) $(shell find internal \( -name '*.go' -o -name '*.c' -o -name '*.h' \))
 	mkdir -p $(APP)/Contents/MacOS
 	$(GO) build -o $(APP)/Contents/MacOS/containerbar ./cmd/containerbar
 	printf '%s\n' \

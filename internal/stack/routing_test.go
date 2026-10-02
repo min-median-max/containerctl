@@ -12,6 +12,7 @@ x-containerctl:
 services:
   web:
     image: nginx
+    expose: ["80"]
     x-containerctl:
       domains: [console.site.test, example.site.test, admin.example.site.test]
   db:

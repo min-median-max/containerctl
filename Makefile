@@ -65,6 +65,9 @@ e2e:
 # containerctl.
 install: all
 	mkdir -p "$(PREFIX)/bin"
+	# A binary overwritten in place keeps the file the kernel validated, and the
+	# kernel kills the new contents with SIGKILL; a new file is validated afresh.
+	rm -f "$(PREFIX)/bin/containerctl" "$(PREFIX)/bin/containerdns"
 	cp $(BIN)/containerctl $(BIN)/containerdns "$(PREFIX)/bin/"
 	rm -rf "$(APPDIR)/containerbar.app"
 	cp -R $(APP) "$(APPDIR)/"
